@@ -1,0 +1,53 @@
+Arguments: 
+  /opt/homebrew/Cellar/node/21.7.2/bin/node /Users/hat_cloud/.yarn/bin/yarn.js install
+
+PATH: 
+  /Users/hat_cloud/.rvm/gems/ruby-2.7.6/bin:/Users/hat_cloud/.rvm/gems/ruby-2.7.6@global/bin:/Users/hat_cloud/.rvm/rubies/ruby-2.7.6/bin:/Users/hat_cloud/.local/bin:/opt/homebrew/sbin:/Users/hat_cloud/.yarn/bin:/Users/hat_cloud/.config/yarn/global/node_modules/.bin:/Users/hat_cloud/.jenv/shims:/Users/hat_cloud/.jenv/bin:/opt/homebrew/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Users/hat_cloud/Library/Application Support/JetBrains/Toolbox/scripts:/Users/hat_cloud/Library/Android/sdk/tools:/Users/hat_cloud/Library/Android/sdk/platform-tools:/Users/hat_cloud/.rvm/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  21.7.2
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: certificate has expired
+      at TLSSocket.onConnectSecure (node:_tls_wrap:1674:34)
+      at TLSSocket.emit (node:events:519:28)
+      at TLSSocket._finishInit (node:_tls_wrap:1085:8)
+      at ssl.onhandshakedone (node:_tls_wrap:871:12)
+
+npm manifest: 
+  {
+  	"name": "obsidian-sample-plugin",
+  	"version": "1.0.0",
+  	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+  	"main": "main.js",
+  	"scripts": {
+  		"dev": "node esbuild.config.mjs",
+  		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+  		"version": "node version-bump.mjs && git add manifest.json versions.json"
+  	},
+  	"keywords": [],
+  	"author": "",
+  	"license": "MIT",
+  	"devDependencies": {
+  		"@types/node": "^16.11.6",
+  		"@typescript-eslint/eslint-plugin": "5.29.0",
+  		"@typescript-eslint/parser": "5.29.0",
+  		"builtin-modules": "3.3.0",
+  		"esbuild": "0.17.3",
+  		"obsidian": "latest",
+  		"tslib": "2.4.0",
+  		"typescript": "4.7.4"
+  	}
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

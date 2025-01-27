@@ -3,7 +3,7 @@
 	"name": "Hat Daily",
 	"version": "0.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "实践帽子日记用的辅助插件",
+	"description": "Three columns for daily journaling",
 	"author": "hat_cloud",
 	"isDesktopOnly": false
 }

@@ -14,7 +14,9 @@ export default class HatDailyPlugin extends Plugin {
 
 		this.addRibbonIcon("notebook", "Hat Daily", () => {
 			if (this.settings.dailyFolderPath === null) {
-				new Notice("请先设置日记根目录");
+				new Notice(
+					"请先设置日记根目录 Please set the daily folder path first."
+				);
 				return;
 			}
 			open3ColumnView(this.app, this.settings, ViewType.DailyView);

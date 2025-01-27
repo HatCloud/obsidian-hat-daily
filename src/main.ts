@@ -1,8 +1,9 @@
 import { Notice, Plugin } from "obsidian";
 import { ViewSelectorModal } from "./compoents/ViewSelectorModal";
-import { HatDailyPluginSettings } from "./interface";
+import { HatDailyPluginSettings, ViewType } from "./interface";
 import { DEFAULT_SETTINGS } from "./constant";
 import { HatDailySettingTab } from "./compoents/HatDailySettingTab";
+import { open3ColumnView } from "./utils";
 
 export default class HatDailyPlugin extends Plugin {
 	settings: HatDailyPluginSettings;
@@ -11,21 +12,45 @@ export default class HatDailyPlugin extends Plugin {
 		await this.loadSettings();
 		this.addStyles();
 
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon(
-			"scroll",
-			"Hat Daily",
-			(evt: MouseEvent) => {
-				// Called when the user clicks the icon.
-				if (this.settings.dailyFolderPath === null) {
-					new Notice("请先设置日记根目录");
-					return;
-				}
-				new ViewSelectorModal(this.app, this.settings).open();
+		this.addRibbonIcon("notebook", "Hat Daily", () => {
+			if (this.settings.dailyFolderPath === null) {
+				new Notice("请先设置日记根目录");
+				return;
 			}
-		);
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass("hat-daily-plugin-ribbon-class");
+			open3ColumnView(this.app, this.settings, ViewType.DailyView);
+		}).addClass("hat-daily-plugin-ribbon-class");
+
+		if (this.settings.enableModalButton) {
+			this.addRibbonIcon("scroll", "Open Hat Daily Modal", () => {
+				new ViewSelectorModal(this.app, this.settings).open();
+			}).addClass("hat-daily-plugin-ribbon-class");
+		}
+
+		this.addCommand({
+			id: "open-view-daily",
+			name: "Open Daily 3 Column View",
+			hotkeys: [{ modifiers: ["Mod", "Shift"], key: "d" }],
+			callback: () => {
+				console.log("Hey, you!");
+				open3ColumnView(this.app, this.settings, ViewType.DailyView);
+			},
+		});
+
+		this.addCommand({
+			id: "open-view-monthly",
+			name: "Open Monthly 3 Column View",
+			callback: () => {
+				open3ColumnView(this.app, this.settings, ViewType.MonthlyView);
+			},
+		});
+
+		this.addCommand({
+			id: "open-view-yearly",
+			name: "Open Yearly 3 Column View",
+			callback: () => {
+				open3ColumnView(this.app, this.settings, ViewType.YearlyView);
+			},
+		});
 
 		this.addSettingTab(new HatDailySettingTab(this.app, this));
 	}

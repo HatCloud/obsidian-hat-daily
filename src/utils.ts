@@ -1,6 +1,81 @@
 import { App, Notice, TFile, TFolder } from "obsidian";
 import { HatDailyPluginSettings, ViewType } from "./interface";
 
+export async function open3ColumnView(
+	app: App,
+	settings: HatDailyPluginSettings,
+	viewType: ViewType
+) {
+	const dailyFolderPath = settings.dailyFolderPath;
+	if (!dailyFolderPath) {
+		new Notice("请先设置日记根目录");
+		return;
+	}
+	const todayDate = window.moment().format(settings.dailyFileFormat);
+	const currentMonth = window.moment().format(settings.monthlyFileFormat);
+	const currentYear = window.moment().format(settings.yearlyFileFormat);
+	const recentNote = await getRecentNote(
+		app,
+		viewType,
+		dailyFolderPath,
+		settings
+	);
+
+	const templatePath: string | null = getTemplate(viewType, settings);
+
+	switch (viewType) {
+		case ViewType.DailyView:
+			await openTriplePane(
+				app,
+				recentNote,
+				await getOrCreateNoteFile(
+					app,
+					todayDate,
+					templatePath,
+					dailyFolderPath
+				),
+				await getOrCreateNoteFile(
+					app,
+					currentMonth,
+					templatePath,
+					dailyFolderPath
+				)
+			);
+			break;
+		case ViewType.MonthlyView:
+			await openTriplePane(
+				app,
+				recentNote,
+				await getOrCreateNoteFile(
+					app,
+					currentMonth,
+					templatePath,
+					dailyFolderPath
+				),
+				await getOrCreateNoteFile(
+					app,
+					currentYear,
+					templatePath,
+					dailyFolderPath
+				)
+			);
+			break;
+		case ViewType.YearlyView:
+			await openTriplePane(
+				app,
+				recentNote,
+				await getOrCreateNoteFile(
+					app,
+					currentYear,
+					templatePath,
+					dailyFolderPath
+				),
+				null
+			);
+			break;
+	}
+}
+
 export async function openTriplePane(
 	app: App,
 	leftFile: TFile | null,
@@ -115,22 +190,22 @@ export async function getOrCreateNoteFile(
 
 function getFormat(type: ViewType, settings: HatDailyPluginSettings) {
 	switch (type) {
-		case "日间视图":
+		case ViewType.DailyView:
 			return settings.dailyFileFormat;
-		case "月间视图":
+		case ViewType.MonthlyView:
 			return settings.monthlyFileFormat;
-		case "年间视图":
+		case ViewType.YearlyView:
 			return settings.yearlyFileFormat;
 	}
 }
 
 export function getTemplate(type: ViewType, settings: HatDailyPluginSettings) {
 	switch (type) {
-		case "日间视图":
+		case ViewType.DailyView:
 			return settings.dailyTemplatePath;
-		case "月间视图":
+		case ViewType.MonthlyView:
 			return settings.monthlyTemplatePath;
-		case "年间视图":
+		case ViewType.YearlyView:
 			return settings.yearlyTemplatePath;
 		default:
 			throw new Error(`Unsupported type: ${type}`);

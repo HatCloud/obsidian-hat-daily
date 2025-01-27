@@ -1,11 +1,6 @@
-import { App, Modal, Notice } from "obsidian";
+import { App, Modal } from "obsidian";
 import { HatDailyPluginSettings, ViewType } from "../interface";
-import {
-	getOrCreateNoteFile,
-	getRecentNote,
-	getTemplate,
-	openTriplePane,
-} from "../utils";
+import { open3ColumnView } from "../utils";
 
 export class ViewSelectorModal extends Modal {
 	settings: HatDailyPluginSettings;
@@ -28,7 +23,11 @@ export class ViewSelectorModal extends Modal {
 				cls: "mod-cta",
 			});
 			choiceButton.addEventListener("click", () => {
-				void this.openChoiceView(choice);
+				void open3ColumnView(
+					this.app,
+					this.settings,
+					this.choiceToViewType(choice)
+				);
 				this.close();
 			});
 		});
@@ -39,78 +38,16 @@ export class ViewSelectorModal extends Modal {
 		contentEl.empty();
 	}
 
-	async openChoiceView(choice: ViewType) {
-		const dailyFolderPath = this.settings.dailyFolderPath;
-		if (!dailyFolderPath) {
-			new Notice("请先设置日记根目录");
-			return;
-		}
-		const todayDate = window.moment().format(this.settings.dailyFileFormat);
-		const currentMonth = window
-			.moment()
-			.format(this.settings.monthlyFileFormat);
-		const currentYear = window
-			.moment()
-			.format(this.settings.yearlyFileFormat);
-		const recentNote = await getRecentNote(
-			this.app,
-			choice,
-			dailyFolderPath,
-			this.settings
-		);
-
-		const templatePath: string | null = getTemplate(choice, this.settings);
-
+	choiceToViewType(choice: string): ViewType {
 		switch (choice) {
 			case "日间视图":
-				await openTriplePane(
-					this.app,
-					recentNote,
-					await getOrCreateNoteFile(
-						this.app,
-						todayDate,
-						templatePath,
-						dailyFolderPath
-					),
-					await getOrCreateNoteFile(
-						this.app,
-						currentMonth,
-						templatePath,
-						dailyFolderPath
-					)
-				);
-				break;
+				return ViewType.DailyView;
 			case "月间视图":
-				await openTriplePane(
-					this.app,
-					recentNote,
-					await getOrCreateNoteFile(
-						this.app,
-						currentMonth,
-						templatePath,
-						dailyFolderPath
-					),
-					await getOrCreateNoteFile(
-						this.app,
-						currentYear,
-						templatePath,
-						dailyFolderPath
-					)
-				);
-				break;
+				return ViewType.MonthlyView;
 			case "年间视图":
-				await openTriplePane(
-					this.app,
-					recentNote,
-					await getOrCreateNoteFile(
-						this.app,
-						currentYear,
-						templatePath,
-						dailyFolderPath
-					),
-					null
-				);
-				break;
+				return ViewType.YearlyView;
+			default:
+				throw new Error("Invalid choice");
 		}
 	}
 }

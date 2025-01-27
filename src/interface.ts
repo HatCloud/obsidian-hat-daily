@@ -1,4 +1,8 @@
-export type ViewType = "日间视图" | "月间视图" | "年间视图";
+export enum ViewType {
+	DailyView = "DailyView",
+	MonthlyView = "MonthlyView",
+	YearlyView = "YearlyView",
+}
 
 export interface HatDailyPluginSettings {
 	dailyFileFormat: string;
@@ -10,4 +14,6 @@ export interface HatDailyPluginSettings {
 	yearlyTemplatePath: string | null;
 
 	dailyFolderPath: string | null;
+
+	enableModalButton: boolean;
 }

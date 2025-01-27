@@ -15,15 +15,32 @@ export class HatDailySettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		new Setting(containerEl).setName("Daily Root Path").addText((text) =>
-			text
-				.setPlaceholder("")
-				.setValue(this.plugin.settings.dailyFolderPath ?? "")
-				.onChange(async (value) => {
-					this.plugin.settings.dailyFolderPath = value;
-					await this.plugin.saveSettings();
-				})
-		);
+		new Setting(containerEl)
+			.setName("Daily Root Path")
+			.setDesc("The root path of your daily notes.\nExample: 'Daily'")
+			.addText((text) =>
+				text
+					.setPlaceholder("")
+					.setValue(this.plugin.settings.dailyFolderPath ?? "")
+					.onChange(async (value) => {
+						this.plugin.settings.dailyFolderPath = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Enable Modal Button")
+			.setDesc(
+				"Enable the modal button in the ribbon, which allows you to select the view type. \nrequires a restart to take effect."
+			)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.enableModalButton)
+					.onChange(async (value) => {
+						this.plugin.settings.enableModalButton = value;
+						await this.plugin.saveSettings();
+					})
+			);
 
 		new Setting(containerEl).setName("Daily File Format").addText((text) =>
 			text

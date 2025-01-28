@@ -32,7 +32,6 @@ export default class HatDailyPlugin extends Plugin {
 			id: "open-view-daily",
 			name: "Open Daily 3 Column View",
 			callback: () => {
-				console.log("Hey, you!");
 				open3ColumnView(this.app, this.settings, ViewType.DailyView);
 			},
 		});

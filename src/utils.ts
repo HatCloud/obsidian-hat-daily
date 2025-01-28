@@ -82,7 +82,6 @@ export async function openTriplePane(
 	middleFile: TFile | null,
 	rightFile: TFile | null
 ) {
-	console.log("openTriplePane");
 	// 清除现有的叶子
 	await app.workspace.detachLeavesOfType("markdown");
 
@@ -169,9 +168,6 @@ export async function getOrCreateNoteFile(
 		if (found instanceof TFile) {
 			templateNote = found;
 		}
-		console.log(
-			`templatePath ${templatePath} templateNote ${templateNote}`
-		);
 	}
 	if (!foundNote) {
 		const notePath = `${dailyFolderPath}/${date}.md`;

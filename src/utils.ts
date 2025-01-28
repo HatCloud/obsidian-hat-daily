@@ -14,7 +14,7 @@ export async function open3ColumnView(
 	const todayDate = window.moment().format(settings.dailyFileFormat);
 	const currentMonth = window.moment().format(settings.monthlyFileFormat);
 	const currentYear = window.moment().format(settings.yearlyFileFormat);
-	const recentNote = await getRecentNote(
+	const recentNote = await getRecentNote2(
 		app,
 		viewType,
 		dailyFolderPath,
@@ -22,6 +22,21 @@ export async function open3ColumnView(
 	);
 
 	const templatePath: string | null = getTemplate(viewType, settings);
+	let rightViewType: ViewType | null = null;
+	switch (viewType) {
+		case ViewType.DailyView:
+			rightViewType = ViewType.MonthlyView;
+			break;
+		case ViewType.MonthlyView:
+			rightViewType = ViewType.YearlyView;
+			break;
+		case ViewType.YearlyView:
+			rightViewType = null;
+			break;
+	}
+	const rightTemplatePath: string | null = rightViewType
+		? getTemplate(rightViewType, settings)
+		: null;
 
 	switch (viewType) {
 		case ViewType.DailyView:
@@ -37,7 +52,7 @@ export async function open3ColumnView(
 				await getOrCreateNoteFile(
 					app,
 					currentMonth,
-					templatePath,
+					rightTemplatePath,
 					dailyFolderPath
 				)
 			);
@@ -55,7 +70,7 @@ export async function open3ColumnView(
 				await getOrCreateNoteFile(
 					app,
 					currentYear,
-					templatePath,
+					rightTemplatePath,
 					dailyFolderPath
 				)
 			);
@@ -138,6 +153,62 @@ export async function getRecentNote(
 		}
 	}
 
+	return recentNote;
+}
+
+export async function getRecentNote2(
+	app: App,
+	type: ViewType,
+	dailyFolderPath: string,
+	settings: HatDailyPluginSettings
+) {
+	const format = getFormat(type, settings);
+	const now = window.moment();
+
+	// 根据视图类型计算目标基准时间
+	let targetDate = now.clone();
+	switch (type) {
+		case ViewType.DailyView:
+			targetDate = now.subtract(1, "day").startOf("day"); // 昨日
+			break;
+		case ViewType.MonthlyView:
+			targetDate = now.subtract(1, "month").startOf("month"); // 上月
+			break;
+		case ViewType.YearlyView:
+			targetDate = now.subtract(1, "year").startOf("year"); // 去年
+			break;
+	}
+
+	const allDailyNotes = getFilesInFolder(app, dailyFolderPath);
+
+	let recentNote: TFile | null = null;
+	let closestDiff = Infinity; // 记录最小时间差
+
+	for (const file of allDailyNotes) {
+		if (file instanceof TFolder) continue;
+
+		// 严格校验日期格式
+		const parsedDate = window.moment(file.basename, format, true);
+		if (!parsedDate.isValid()) continue;
+
+		// 计算与目标日期的绝对时间差（毫秒）
+		const diff = Math.abs(targetDate.diff(parsedDate));
+
+		// 只接受早于等于当前周期的笔记（排除未来笔记）
+		if (parsedDate.isAfter(targetDate)) continue;
+
+		// 寻找最接近目标日期的笔记
+		if (diff < closestDiff) {
+			closestDiff = diff;
+			recentNote = file;
+		}
+	}
+
+	console.log(
+		`getRecentNote: [${type} View] Target: ${targetDate.format(
+			format
+		)}, Found: ${recentNote?.basename}`
+	);
 	return recentNote;
 }
 

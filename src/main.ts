@@ -31,7 +31,6 @@ export default class HatDailyPlugin extends Plugin {
 		this.addCommand({
 			id: "open-view-daily",
 			name: "Open Daily 3 Column View",
-			hotkeys: [{ modifiers: ["Mod", "Shift"], key: "d" }],
 			callback: () => {
 				console.log("Hey, you!");
 				open3ColumnView(this.app, this.settings, ViewType.DailyView);

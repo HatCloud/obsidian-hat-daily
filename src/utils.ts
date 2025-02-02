@@ -14,7 +14,7 @@ export async function open3ColumnView(
 	const todayDate = window.moment().format(settings.dailyFileFormat);
 	const currentMonth = window.moment().format(settings.monthlyFileFormat);
 	const currentYear = window.moment().format(settings.yearlyFileFormat);
-	const recentNote = await getRecentNote2(
+	const recentNote = await getRecentNote(
 		app,
 		viewType,
 		dailyFolderPath,
@@ -91,6 +91,104 @@ export async function open3ColumnView(
 	}
 }
 
+/**
+ * 归档上个月的文件；具体细节如下
+ * 1. 在 ViewSelectorModal 中添加一个选项：归档上个月文件
+ * 2. 用户按下按钮后，将上个月的文件移动到以上个月命名的文件夹中
+ * 3. 上个月的文件具体指的是月份文件（2025-01）和每一天的文件（2025-01-01，2025-01-02...）具体命名需要和设置中的格式模版有关
+ * 4. 归档到的文件夹是在设置中的根目录下的 年份/月份 这样的方式组织
+ */
+export async function archiveLastMonth(
+	app: App,
+	settings: HatDailyPluginSettings
+) {
+	const dailyFolderPath = settings.dailyFolderPath;
+	if (!dailyFolderPath) {
+		new Notice("请先设置日记根目录");
+		return;
+	}
+	const lastMonth = window
+		.moment()
+		.subtract(1, "month")
+		.format(settings.monthlyFileFormat);
+	const lastMonthYear = window
+		.moment()
+		.subtract(1, "month")
+		.format(settings.yearlyFileFormat);
+	const lastMonthFolder = `${dailyFolderPath}/${lastMonthYear}/${lastMonth}`;
+	const allDailyNotes = getFilesInFolder(app, dailyFolderPath);
+	const dailyFileFormat = getFormat(ViewType.DailyView, settings);
+	const monthlyFileFormat = getFormat(ViewType.MonthlyView, settings);
+	const yearlyFileFormat = getFormat(ViewType.YearlyView, settings);
+	const lastMonthStart = window
+		.moment()
+		.subtract(1, "month")
+		.startOf("month");
+	const lastMonthEnd = window.moment().subtract(1, "month").endOf("month");
+
+	const lastMonthFiles = allDailyNotes.filter((file) => {
+		if (file instanceof TFolder) return false;
+		const parsedDate = window.moment(file.basename, dailyFileFormat, true);
+		if (!parsedDate.isValid()) return false;
+		return parsedDate.isBetween(
+			lastMonthStart,
+			lastMonthEnd,
+			undefined,
+			"[]"
+		);
+	});
+
+	const lastMonthFile = allDailyNotes.find((file) => {
+		if (file instanceof TFolder) return false;
+		const parsedDate = window.moment(
+			file.basename,
+			monthlyFileFormat,
+			true
+		);
+		if (!parsedDate.isValid()) return false;
+		return parsedDate.isSame(lastMonthStart, "month");
+	});
+
+	if (lastMonthFiles.length === 0 && !lastMonthFile) {
+		new Notice(`上个月没有日记文件`);
+		return;
+	}
+	const lastMonthFolderExists =
+		app.vault.getAbstractFileByPath(lastMonthFolder);
+	if (!lastMonthFolderExists) {
+		await app.vault.createFolder(lastMonthFolder);
+	}
+	for (const file of lastMonthFiles) {
+		if (file instanceof TFolder) continue;
+		const basename = file.basename;
+		const targetPath = `${lastMonthFolder}/${basename}.md`;
+		await app.vault.rename(file, targetPath);
+	}
+	if (lastMonthFile) {
+		const targetPath = `${lastMonthFolder}/${lastMonth}.md`;
+		await app.vault.rename(lastMonthFile, targetPath);
+	}
+
+	const currentYear = window.moment().format(settings.yearlyFileFormat);
+	for (const file of allDailyNotes) {
+		const parsedDate = window.moment(file.basename, yearlyFileFormat, true);
+		if (parsedDate.isValid() && parsedDate.format("YYYY") !== currentYear) {
+			const yearFolder = `${dailyFolderPath}/${parsedDate.format(
+				"YYYY"
+			)}`;
+			const yearFolderExists =
+				app.vault.getAbstractFileByPath(yearFolder);
+			if (!yearFolderExists) {
+				await app.vault.createFolder(yearFolder);
+			}
+			const targetPath = `${yearFolder}/${file.basename}.md`;
+			await app.vault.rename(file, targetPath);
+		}
+	}
+
+	new Notice(`已将上个月的文件归档到 ${lastMonthFolder}`);
+}
+
 export async function openTriplePane(
 	app: App,
 	leftFile: TFile | null,
@@ -128,35 +226,6 @@ export async function openTriplePane(
 }
 
 export async function getRecentNote(
-	app: App,
-	type: ViewType,
-	dailyFolderPath: string,
-	settings: HatDailyPluginSettings
-) {
-	const format = getFormat(type, settings);
-	const nowDate = window.moment().format(format);
-	// 获取所有日记文件
-	const allDailyNotes = getFilesInFolder(app, dailyFolderPath);
-
-	// 找到最近的日记文件
-	let recentNote = null;
-	let recentDate = window.moment("0000-01-01", format);
-	for (const file of allDailyNotes) {
-		const basename = file.basename;
-		if (basename === nowDate || file instanceof TFolder) {
-			continue;
-		}
-		const fileDate = window.moment(basename, format);
-		if (fileDate.isAfter(recentDate)) {
-			recentDate = fileDate;
-			recentNote = file;
-		}
-	}
-
-	return recentNote;
-}
-
-export async function getRecentNote2(
 	app: App,
 	type: ViewType,
 	dailyFolderPath: string,

@@ -1,5 +1,5 @@
 import { Notice, Plugin } from "obsidian";
-import { ViewSelectorModal } from "./compoents/ViewSelectorModal";
+import { ChoicesModal } from "./compoents/ViewSelectorModal";
 import { HatDailyPluginSettings, ViewType } from "./interface";
 import { DEFAULT_SETTINGS } from "./constant";
 import { HatDailySettingTab } from "./compoents/HatDailySettingTab";
@@ -24,7 +24,7 @@ export default class HatDailyPlugin extends Plugin {
 
 		if (this.settings.enableModalButton) {
 			this.addRibbonIcon("scroll", "Open Hat Daily Modal", () => {
-				new ViewSelectorModal(this.app, this.settings).open();
+				new ChoicesModal(this.app, this.settings).open();
 			}).addClass("hat-daily-plugin-ribbon-class");
 		}
 

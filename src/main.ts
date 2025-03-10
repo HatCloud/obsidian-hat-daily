@@ -10,7 +10,6 @@ export default class HatDailyPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
-		this.addStyles();
 
 		this.addRibbonIcon("notebook", "Hat Daily", () => {
 			if (this.settings.dailyFolderPath === null) {
@@ -71,26 +70,5 @@ export default class HatDailyPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-
-	// 注册插件时调用，为模态对话框添加自定义样式
-	addStyles() {
-		const styleEl = document.createElement("style");
-		document.head.appendChild(styleEl);
-		const styleSheet = styleEl.sheet;
-
-		if (!styleSheet) {
-			return;
-		}
-
-		styleSheet.insertRule(
-			".button-container { display: flex; flex-direction: column; gap: 8pt; }",
-			0
-		);
-		styleSheet.insertRule(".choice-button { margin-bottom: 8pt; }", 1);
-		styleSheet.insertRule(
-			".choice-button:last-child { margin-bottom: 0; }",
-			2
-		);
 	}
 }

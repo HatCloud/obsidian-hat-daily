@@ -1,8 +1,14 @@
-/*
+/* Plugin styles */
+.button-container {
+	display: flex;
+	flex-direction: column;
+	gap: 8pt;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.choice-button {
+	margin-bottom: 8pt;
+}
 
-If your plugin does not need CSS, delete this file.
-
-*/
+.choice-button:last-child {
+	margin-bottom: 0;
+}

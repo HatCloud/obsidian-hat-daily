@@ -50,12 +50,6 @@ export default class HatDailyPlugin extends Plugin {
 		this.addSettingTab(new HatDailySettingTab(this.app, this));
 	}
 
-	onunload() {
-		document
-			.querySelectorAll(".choice-modal-style")
-			.forEach((el) => el.remove());
-	}
-
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},

@@ -275,11 +275,6 @@ export async function getRecentNote(
 		}
 	}
 
-	console.log(
-		`getRecentNote: [${type} View] Target: ${targetDate.format(
-			format
-		)}, Found: ${recentNote?.basename}`
-	);
 	return recentNote;
 }
 

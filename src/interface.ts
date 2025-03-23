@@ -14,6 +14,4 @@ export interface HatDailyPluginSettings {
 	yearlyTemplatePath: string | null;
 
 	dailyFolderPath: string | null;
-
-	enableModalButton: boolean;
 }

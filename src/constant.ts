@@ -10,6 +10,4 @@ export const DEFAULT_SETTINGS: HatDailyPluginSettings = {
 	yearlyTemplatePath: null,
 
 	dailyFolderPath: null,
-
-	enableModalButton: true,
 };

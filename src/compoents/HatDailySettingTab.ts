@@ -16,7 +16,7 @@ export class HatDailySettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("Daily Root Path")
+			.setName("Daily root path")
 			.setDesc("The root path of your daily notes.\nExample: 'Daily'")
 			.addText((text) =>
 				text
@@ -28,21 +28,7 @@ export class HatDailySettingTab extends PluginSettingTab {
 					})
 			);
 
-		new Setting(containerEl)
-			.setName("Enable Modal Button")
-			.setDesc(
-				"Enable the modal button in the ribbon, which allows you to select the view type. \nrequires a restart to take effect."
-			)
-			.addToggle((toggle) =>
-				toggle
-					.setValue(this.plugin.settings.enableModalButton)
-					.onChange(async (value) => {
-						this.plugin.settings.enableModalButton = value;
-						await this.plugin.saveSettings();
-					})
-			);
-
-		new Setting(containerEl).setName("Daily File Format").addText((text) =>
+		new Setting(containerEl).setName("Daily file format").addText((text) =>
 			text
 				.setPlaceholder(DEFAULT_SETTINGS.dailyFileFormat)
 				.setValue(this.plugin.settings.dailyFileFormat)
@@ -53,7 +39,7 @@ export class HatDailySettingTab extends PluginSettingTab {
 		);
 
 		new Setting(containerEl)
-			.setName("Monthly File Format")
+			.setName("Monthly file format")
 			.addText((text) =>
 				text
 					.setPlaceholder(DEFAULT_SETTINGS.monthlyFileFormat)
@@ -64,7 +50,7 @@ export class HatDailySettingTab extends PluginSettingTab {
 					})
 			);
 
-		new Setting(containerEl).setName("Yearly File Format").addText((text) =>
+		new Setting(containerEl).setName("Yearly file format").addText((text) =>
 			text
 				.setPlaceholder(DEFAULT_SETTINGS.yearlyFileFormat)
 				.setValue(this.plugin.settings.yearlyFileFormat)
@@ -75,7 +61,7 @@ export class HatDailySettingTab extends PluginSettingTab {
 		);
 
 		new Setting(containerEl)
-			.setName("Daily Template Path")
+			.setName("Daily template path")
 			.addText((text) =>
 				text
 					.setPlaceholder("")
@@ -87,7 +73,7 @@ export class HatDailySettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Monthly Template Path")
+			.setName("Monthly template path")
 			.addText((text) =>
 				text
 					.setPlaceholder("")
@@ -99,7 +85,7 @@ export class HatDailySettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Yearly Template Path")
+			.setName("Yearly template path")
 			.addText((text) =>
 				text
 					.setPlaceholder("")

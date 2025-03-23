@@ -17,7 +17,7 @@ export class ChoicesModal extends Modal {
 
 	onOpen() {
 		const { contentEl } = this;
-		contentEl.createEl("h2", { text: "请选择 Choose" });
+		contentEl.createEl("h2", { text: "Choose" });
 
 		const buttonContainer = contentEl.createDiv("button-container");
 
@@ -55,13 +55,13 @@ export class ChoicesModal extends Modal {
 	choiceToTitle(choice: ChoiceType): string {
 		switch (choice) {
 			case ViewType.DailyView:
-				return "日间视图 Daliy View";
+				return "Daily View";
 			case ViewType.MonthlyView:
-				return "月间视图 Monthly View";
+				return "Monthly View";
 			case ViewType.YearlyView:
-				return "年间视图 Yearly View";
+				return "Yearly View";
 			case "Archive":
-				return "归档上个月文件 Archive Last Month";
+				return "Archive Last Month";
 			default:
 				throw new Error("Invalid choice");
 		}

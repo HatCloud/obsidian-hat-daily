@@ -11,25 +11,21 @@ export default class HatDailyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.addRibbonIcon("notebook", "Hat Daily", () => {
+		this.addRibbonIcon("notebook", "Hat daily", () => {
 			if (this.settings.dailyFolderPath === null) {
-				new Notice(
-					"请先设置日记根目录 Please set the daily folder path first."
-				);
+				new Notice("Please set the daily folder path first.");
 				return;
 			}
 			open3ColumnView(this.app, this.settings, ViewType.DailyView);
 		}).addClass("hat-daily-plugin-ribbon-class");
 
-		if (this.settings.enableModalButton) {
-			this.addRibbonIcon("scroll", "Open Hat Daily Modal", () => {
-				new ChoicesModal(this.app, this.settings).open();
-			}).addClass("hat-daily-plugin-ribbon-class");
-		}
+		this.addRibbonIcon("scroll", "Open hat daily modal", () => {
+			new ChoicesModal(this.app, this.settings).open();
+		}).addClass("hat-daily-plugin-ribbon-class");
 
 		this.addCommand({
 			id: "open-view-daily",
-			name: "Open Daily 3 Column View",
+			name: "Open daily 3 column view",
 			callback: () => {
 				open3ColumnView(this.app, this.settings, ViewType.DailyView);
 			},
@@ -37,7 +33,7 @@ export default class HatDailyPlugin extends Plugin {
 
 		this.addCommand({
 			id: "open-view-monthly",
-			name: "Open Monthly 3 Column View",
+			name: "Open monthly 3 column view",
 			callback: () => {
 				open3ColumnView(this.app, this.settings, ViewType.MonthlyView);
 			},
@@ -45,7 +41,7 @@ export default class HatDailyPlugin extends Plugin {
 
 		this.addCommand({
 			id: "open-view-yearly",
-			name: "Open Yearly 3 Column View",
+			name: "Open yearly 3 column view",
 			callback: () => {
 				open3ColumnView(this.app, this.settings, ViewType.YearlyView);
 			},

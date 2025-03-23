@@ -1,4 +1,4 @@
-import { App, Notice, TFile, TFolder } from "obsidian";
+import { App, Notice, TFile, TFolder, WorkspaceLeaf } from "obsidian";
 import { HatDailyPluginSettings, ViewType } from "./interface";
 
 export async function open3ColumnView(
@@ -195,8 +195,10 @@ export async function openTriplePane(
 	middleFile: TFile | null,
 	rightFile: TFile | null
 ) {
-	// 清除现有的叶子
-	await app.workspace.detachLeavesOfType("markdown");
+	// 清除根分栏中的所有叶子
+	await this.app.workspace.iterateRootLeaves((leaf: WorkspaceLeaf) => {
+		leaf.detach();
+	});
 
 	// 创建三个分栏
 	const leftPane = app.workspace.getLeaf();

@@ -104,7 +104,7 @@ export async function archiveLastMonth(
 ) {
 	const dailyFolderPath = settings.dailyFolderPath;
 	if (!dailyFolderPath) {
-		new Notice("请先设置日记根目录");
+		new Notice("Please set the daily folder path first.");
 		return;
 	}
 	const lastMonth = window
@@ -150,7 +150,7 @@ export async function archiveLastMonth(
 	});
 
 	if (lastMonthFiles.length === 0 && !lastMonthFile) {
-		new Notice(`上个月没有日记文件`);
+		new Notice(`There is no file to archive for ${lastMonth}`);
 		return;
 	}
 	const lastMonthFolderExists =
@@ -186,7 +186,7 @@ export async function archiveLastMonth(
 		}
 	}
 
-	new Notice(`已将上个月的文件归档到 ${lastMonthFolder}`);
+	new Notice(`Archived files to ${lastMonthFolder}`);
 }
 
 export async function openTriplePane(
@@ -366,4 +366,66 @@ function getFilesInFolder(app: App, folderPath: string): TFile[] {
 		.getFiles()
 		.filter((file) => file.path.startsWith(folderPath));
 	return files;
+}
+
+import { AbstractInputSuggest } from "obsidian";
+
+export class FileSuggest extends AbstractInputSuggest<string> {
+	private inputEl: HTMLInputElement;
+	constructor(app: App, inputEl: HTMLInputElement) {
+		super(app, inputEl);
+		this.inputEl = inputEl;
+	}
+
+	getSuggestions(inputStr: string): string[] {
+		const files = this.app.vault.getFiles();
+		const lowerCaseInputStr = inputStr.toLowerCase();
+		return files
+			.map((file) => file.path)
+			.filter((path) => path.toLowerCase().includes(lowerCaseInputStr));
+	}
+
+	renderSuggestion(filePath: string, el: HTMLElement): void {
+		el.setText(filePath);
+	}
+
+	selectSuggestion(filePath: string, evt: MouseEvent | KeyboardEvent): void {
+		this.inputEl.value = filePath;
+		this.inputEl.blur();
+		this.close();
+	}
+}
+
+export class FolderSuggest extends AbstractInputSuggest<string> {
+	private inputEl: HTMLInputElement;
+	constructor(app: App, inputEl: HTMLInputElement) {
+		super(app, inputEl);
+		this.inputEl = inputEl;
+	}
+
+	getSuggestions(inputStr: string): string[] {
+		const folders: TFolder[] = [];
+		this.app.vault.getAllLoadedFiles().forEach((file) => {
+			if (file instanceof TFolder) {
+				folders.push(file);
+			}
+		});
+		const lowerCaseInputStr = inputStr.toLowerCase();
+		return folders
+			.map((folder) => folder.path)
+			.filter((path) => path.toLowerCase().includes(lowerCaseInputStr));
+	}
+
+	renderSuggestion(folderPath: string, el: HTMLElement): void {
+		el.setText(folderPath);
+	}
+
+	selectSuggestion(
+		folderPath: string,
+		evt: MouseEvent | KeyboardEvent
+	): void {
+		this.inputEl.value = folderPath;
+		this.inputEl.blur();
+		this.close();
+	}
 }

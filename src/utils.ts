@@ -162,11 +162,11 @@ export async function archiveLastMonth(
 		if (file instanceof TFolder) continue;
 		const basename = file.basename;
 		const targetPath = `${lastMonthFolder}/${basename}.md`;
-		await app.vault.rename(file, targetPath);
+		await app.fileManager.renameFile(file, targetPath);
 	}
 	if (lastMonthFile) {
 		const targetPath = `${lastMonthFolder}/${lastMonth}.md`;
-		await app.vault.rename(lastMonthFile, targetPath);
+		await app.fileManager.renameFile(lastMonthFile, targetPath);
 	}
 
 	const currentYear = window.moment().format(settings.yearlyFileFormat);
@@ -182,7 +182,7 @@ export async function archiveLastMonth(
 				await app.vault.createFolder(yearFolder);
 			}
 			const targetPath = `${yearFolder}/${file.basename}.md`;
-			await app.vault.rename(file, targetPath);
+			await app.fileManager.renameFile(file, targetPath);
 		}
 	}
 

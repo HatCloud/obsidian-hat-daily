@@ -1,7 +1,7 @@
 {
 	"id": "hat-daily",
 	"name": "Hat Daily",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"minAppVersion": "0.15.0",
 	"description": "Three columns daily journaling",
 	"author": "hat_cloud",

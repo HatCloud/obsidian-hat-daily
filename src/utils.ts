@@ -393,6 +393,7 @@ export class FileSuggest extends AbstractInputSuggest<string> {
 
 	selectSuggestion(filePath: string, evt: MouseEvent | KeyboardEvent): void {
 		this.inputEl.value = filePath;
+		this.inputEl.dispatchEvent(new Event("input")); // 手动触发 onChange
 		this.inputEl.blur();
 		this.close();
 	}
@@ -427,6 +428,7 @@ export class FolderSuggest extends AbstractInputSuggest<string> {
 		evt: MouseEvent | KeyboardEvent
 	): void {
 		this.inputEl.value = folderPath;
+		this.inputEl.dispatchEvent(new Event("input")); // 手动触发 onChange
 		this.inputEl.blur();
 		this.close();
 	}

@@ -118,7 +118,6 @@ export async function archiveLastMonth(
 	const lastMonthFolder = `${dailyFolderPath}/${lastMonthYear}/${lastMonth}`;
 	const allDailyNotes = getFilesInFolder(app, dailyFolderPath);
 	const dailyFileFormat = getFormat(ViewType.DailyView, settings);
-	const monthlyFileFormat = getFormat(ViewType.MonthlyView, settings);
 	const yearlyFileFormat = getFormat(ViewType.YearlyView, settings);
 	const lastMonthStart = window
 		.moment()
@@ -138,16 +137,8 @@ export async function archiveLastMonth(
 		);
 	});
 
-	const lastMonthFile = allDailyNotes.find((file) => {
-		if (file instanceof TFolder) return false;
-		const parsedDate = window.moment(
-			file.basename,
-			monthlyFileFormat,
-			true
-		);
-		if (!parsedDate.isValid()) return false;
-		return parsedDate.isSame(lastMonthStart, "month");
-	});
+	const lastMonthFilePath = `${dailyFolderPath}/${lastMonth}.md`;
+	const lastMonthFile = app.vault.getAbstractFileByPath(lastMonthFilePath);
 
 	if (lastMonthFiles.length === 0 && !lastMonthFile) {
 		new Notice(`There is no file to archive for ${lastMonth}`);
@@ -310,7 +301,7 @@ export async function getOrCreateNoteFile(
 		const notePath = `${dailyFolderPath}/${date}.md`;
 		let dailyTemplateText = null;
 		if (!!templatePath && !templateNote) {
-			new Notice(`未找到模板，请检查路径：${templatePath}`);
+			new Notice(`Template file is not found at ${templatePath}.`);
 		} else if (templateNote) {
 			dailyTemplateText = await app.vault.cachedRead(templateNote);
 		}

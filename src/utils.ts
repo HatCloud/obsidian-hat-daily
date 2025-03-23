@@ -317,7 +317,7 @@ export async function getOrCreateNoteFile(
 		if (!!templatePath && !templateNote) {
 			new Notice(`未找到模板，请检查路径：${templatePath}`);
 		} else if (templateNote) {
-			dailyTemplateText = await app.vault.read(templateNote);
+			dailyTemplateText = await app.vault.cachedRead(templateNote);
 		}
 		await app.vault.create(notePath, dailyTemplateText ?? "");
 		foundNote = app.vault.getAbstractFileByPath(notePath);
